@@ -213,12 +213,10 @@
     opacity:0;
     animation: bloom .8s cubic-bezier(.2,1.4,.4,1) forwards;
   }
-  .petal-shape{ fill:var(--rose-red); }
-  .petal-shape.alt{ fill: var(--rose-yellow); }
-  .petal-shape-inner{ fill:var(--rose-red-deep); }
-  .petal-shape-inner.alt{ fill: var(--rose-yellow-deep); }
-  .flower-center{ fill:var(--rose-red-deep); }
-  .flower-center.alt{ fill:var(--rose-yellow-deep); }
+  .petal-shape{ fill:var(--gold); filter: drop-shadow(0 0 6px rgba(255,215,102,.55)); }
+  .petal-shape.alt{ fill: var(--gold-deep); filter: drop-shadow(0 0 6px rgba(255,215,102,.55)); }
+  .flower-center{ fill:#4a2f14; }
+  .flower-center.alt{ fill:#4a2f14; }
 
   @keyframes grow{
     to{ stroke-dashoffset:0; }
@@ -285,40 +283,33 @@
 </main>
 
 <script>
-  // ---------- Ramo de rosas (cámbialo aquí) ----------
-  const FLOWER_COUNT = 26; // <-- cuántas rosas quieres
+  // ---------- Jardín de girasoles (cámbialo aquí) ----------
+  const FLOWER_COUNT = 42; // <-- cuántas flores quieres (bien buchón)
 
-  // Rosa de dos capas de pétalos (exterior grande + interior chico) = se ve
-  // más llena y completa que un anillo simple de pétalos.
-  function roseShape(cls){
+  // Girasol con muchos pétalos delgados = más parecido a un girasol real
+  function sunflowerShape(){
     let s = '';
-    for(let i=0;i<6;i++){
-      const angle = i*60;
-      const cx = Math.round(Math.cos((angle-90)*Math.PI/180)*15*100)/100;
-      const cy = Math.round(Math.sin((angle-90)*Math.PI/180)*15*100)/100;
-      s += `<ellipse class="petal-shape ${cls}" cx="${cx}" cy="${cy}" rx="11" ry="19" transform="rotate(${angle} ${cx} ${cy})"/>`;
-    }
-    for(let i=0;i<6;i++){
-      const angle = i*60+30;
-      const cx = Math.round(Math.cos((angle-90)*Math.PI/180)*8*100)/100;
-      const cy = Math.round(Math.sin((angle-90)*Math.PI/180)*8*100)/100;
-      s += `<ellipse class="petal-shape-inner ${cls}" cx="${cx}" cy="${cy}" rx="7" ry="13" transform="rotate(${angle} ${cx} ${cy})"/>`;
+    const N = 16;
+    for(let i=0;i<N;i++){
+      const angle = i*(360/N);
+      const cx = Math.round(Math.cos((angle-90)*Math.PI/180)*16*100)/100;
+      const cy = Math.round(Math.sin((angle-90)*Math.PI/180)*16*100)/100;
+      s += `<ellipse class="petal-shape" cx="${cx}" cy="${cy}" rx="6.5" ry="20" transform="rotate(${angle} ${cx} ${cy})"/>`;
     }
     return s;
   }
 
   function buildGarden(){
     const svg = document.getElementById('gardenSvg');
-    const W = 400, BASE = 300, MARGIN = 34; // margen generoso: ninguna rosa se corta
+    const W = 400, BASE = 300, MARGIN = 30;
     const flowers = [];
 
     for(let i=0;i<FLOWER_COUNT;i++){
-      const x = MARGIN + (W-MARGIN*2) * (i/(FLOWER_COUNT-1)) + (Math.random()*10-5);
-      const peakY = 60 + Math.random()*90;
+      const x = MARGIN + (W-MARGIN*2) * (i/(FLOWER_COUNT-1)) + (Math.random()*12-6);
+      const peakY = 55 + Math.random()*110;
       const ctrl1Y = BASE - (BASE-peakY)*0.45;
-      const drift = (Math.random()*16-8);           // ramo compacto
-      const scale = 0.8 + Math.random()*0.4;          // rosas grandes y completas
-      const alt = Math.random() < 0.35 ? 'alt' : '';  // ~65% rojas, ~35% amarillas
+      const drift = (Math.random()*20-10);
+      const scale = 0.5 + Math.random()*0.65;          // mezcla de tamaños, bien llenito
       const stemDelay = (Math.random()*1.2).toFixed(2);
       const flowerDelay = (parseFloat(stemDelay)+0.5).toFixed(2);
       const leafDelay = (parseFloat(stemDelay)+0.3).toFixed(2);
@@ -327,22 +318,22 @@
 
       let html = `<path class="stem" d="M${x.toFixed(1)},${BASE} C${(x+drift*0.3).toFixed(1)},${ctrl1Y.toFixed(1)} ${(x+drift*0.7).toFixed(1)},${(peakY+30).toFixed(1)} ${tipX.toFixed(1)},${tipY.toFixed(1)}" style="animation-delay:${stemDelay}s"></path>`;
 
-      if(i % 3 === 0){
+      if(i % 2 === 0){
         const lx = x + drift*0.5;
         const ly = (tipY + BASE)/2;
-        const dir = i % 2 === 0 ? 1 : -1;
-        html += `<path class="leaf" style="--leaf-delay:${leafDelay}s" d="M${lx.toFixed(1)},${ly.toFixed(1)} C${(lx+18*dir).toFixed(1)},${(ly-4).toFixed(1)} ${(lx+22*dir).toFixed(1)},${(ly+10).toFixed(1)} ${(lx+4*dir).toFixed(1)},${(ly+16).toFixed(1)} Z"></path>`;
+        const dir = i % 4 < 2 ? 1 : -1;
+        html += `<path class="leaf" style="--leaf-delay:${leafDelay}s" d="M${lx.toFixed(1)},${ly.toFixed(1)} C${(lx+20*dir).toFixed(1)},${(ly-4).toFixed(1)} ${(lx+24*dir).toFixed(1)},${(ly+12).toFixed(1)} ${(lx+4*dir).toFixed(1)},${(ly+18).toFixed(1)} Z"></path>`;
       }
 
       html += `<g class="flower sway" style="--delay:${flowerDelay}s; --sway-delay:${swayDelay}s" transform="translate(${tipX.toFixed(1)},${tipY.toFixed(1)}) scale(${scale.toFixed(2)})">
-        <g>${roseShape(alt)}<circle class="flower-center ${alt}" r="5"/></g>
+        <g>${sunflowerShape()}<circle class="flower-center" r="13"/></g>
       </g>`;
 
       flowers.push({ tipY, html });
     }
 
-    // dibuja primero las rosas "de atrás" (más arriba) para que las de
-    // adelante queden completas por encima, como un ramo real.
+    // dibuja primero las de atrás (más arriba) para que las de adelante
+    // queden completas por encima, como un ramo tupido real.
     flowers.sort((a,b) => a.tipY - b.tipY);
     svg.innerHTML = flowers.map(f => f.html).join('');
   }

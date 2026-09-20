@@ -224,22 +224,11 @@
   animation-delay: var(--delay, 0s);
 }
 .fa-petal-shape {
-  fill: var(--rose-red);
-}
-.fa-petal-shape.alt {
-  fill: var(--rose-yellow);
-}
-.fa-petal-shape-inner {
-  fill: var(--rose-red-deep);
-}
-.fa-petal-shape-inner.alt {
-  fill: var(--rose-yellow-deep);
+  fill: var(--gold);
+  filter: drop-shadow(0 0 6px rgba(255, 215, 102, 0.55));
 }
 .fa-flower-center {
-  fill: var(--rose-red-deep);
-}
-.fa-flower-center.alt {
-  fill: var(--rose-yellow-deep);
+  fill: #4a2f14;
 }
 
 @keyframes fa-grow {

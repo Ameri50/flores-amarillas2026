@@ -19,7 +19,7 @@ export default function FloresAmarillas({
   titulo = "Hoy es tu día",
   mensaje = "Feliz 21 de marzo 🧡",
   firma = "@Ameri50",
-  flowerCount = 26,
+  flowerCount = 42,
   duracion = 23,
 }) {
   const [stars, setStars] = useState([]);
@@ -57,21 +57,20 @@ export default function FloresAmarillas({
     );
   }, [glyphs]);
 
-  // --- Generar ramo de rosas (rojas y amarillas), denso y sin recortes ---
+  // --- Generar ramo de girasoles, bien tupido y sin recortes ---
   useEffect(() => {
     const W = 400;
     const BASE = 300;
-    const MARGIN = 34; // deja espacio de sobra para que ninguna rosa se corte
+    const MARGIN = 30;
     const list = Array.from({ length: flowerCount }, (_, i) => {
       const x =
         MARGIN +
         (W - MARGIN * 2) * (i / Math.max(flowerCount - 1, 1)) +
-        (Math.random() * 10 - 5);
-      const peakY = 60 + Math.random() * 90;
+        (Math.random() * 12 - 6);
+      const peakY = 55 + Math.random() * 110;
       const ctrl1Y = BASE - (BASE - peakY) * 0.45;
-      const drift = Math.random() * 16 - 8; // menos deriva = ramo más compacto
-      const scale = 0.8 + Math.random() * 0.4; // rosas grandes y completas
-      const alt = Math.random() < 0.35; // ~65% rojas, ~35% amarillas, como el ramo
+      const drift = Math.random() * 20 - 10;
+      const scale = 0.5 + Math.random() * 0.65;
       const stemDelay = +(Math.random() * 1.2).toFixed(2);
       const flowerDelay = +(stemDelay + 0.5).toFixed(2);
       const leafDelay = +(stemDelay + 0.3).toFixed(2);
@@ -81,13 +80,12 @@ export default function FloresAmarillas({
 
       return {
         id: i,
-        alt,
         scale,
         stemDelay,
         flowerDelay,
         leafDelay,
         swayDelay,
-        hasLeaf: i % 3 === 0,
+        hasLeaf: i % 2 === 0,
         stemPath: `M${x.toFixed(1)},${BASE} C${(x + drift * 0.3).toFixed(
           1
         )},${ctrl1Y.toFixed(1)} ${(x + drift * 0.7).toFixed(1)},${(
@@ -96,22 +94,22 @@ export default function FloresAmarillas({
         leafPath: (() => {
           const lx = x + drift * 0.5;
           const ly = (tipY + BASE) / 2;
-          const dir = i % 2 === 0 ? 1 : -1;
+          const dir = i % 4 < 2 ? 1 : -1;
           return `M${lx.toFixed(1)},${ly.toFixed(1)} C${(
             lx +
-            18 * dir
-          ).toFixed(1)},${(ly - 4).toFixed(1)} ${(lx + 22 * dir).toFixed(
+            20 * dir
+          ).toFixed(1)},${(ly - 4).toFixed(1)} ${(lx + 24 * dir).toFixed(
             1
-          )},${(ly + 10).toFixed(1)} ${(lx + 4 * dir).toFixed(1)},${(
-            ly + 16
+          )},${(ly + 12).toFixed(1)} ${(lx + 4 * dir).toFixed(1)},${(
+            ly + 18
           ).toFixed(1)} Z`;
         })(),
         tipX,
         tipY,
       };
     });
-    // Ordena por peakY para que las rosas "de atrás" (más arriba) se dibujen
-    // primero y las de adelante queden completas por encima, como un ramo real.
+    // Dibuja primero las de atrás (más arriba) para que las de adelante
+    // queden completas por encima, como un ramo tupido real.
     list.sort((a, b) => a.tipY - b.tipY);
     setFlowers(list);
   }, [flowerCount]);
@@ -234,48 +232,24 @@ export default function FloresAmarillas({
                   }}
                 >
                   <g>
-                    {/* capa exterior: 6 pétalos grandes */}
-                    {Array.from({ length: 6 }, (_, k) => {
-                      const angle = k * 60;
+                    {Array.from({ length: 16 }, (_, k) => {
+                      const angle = k * (360 / 16);
                       const rad = ((angle - 90) * Math.PI) / 180;
-                      const cx = +(Math.cos(rad) * 15).toFixed(2);
-                      const cy = +(Math.sin(rad) * 15).toFixed(2);
+                      const cx = +(Math.cos(rad) * 16).toFixed(2);
+                      const cy = +(Math.sin(rad) * 16).toFixed(2);
                       return (
                         <ellipse
-                          key={`o${k}`}
-                          className={`fa-petal-shape${f.alt ? " alt" : ""}`}
+                          key={k}
+                          className="fa-petal-shape"
                           cx={cx}
                           cy={cy}
-                          rx="11"
-                          ry="19"
+                          rx="6.5"
+                          ry="20"
                           transform={`rotate(${angle} ${cx} ${cy})`}
                         />
                       );
                     })}
-                    {/* capa interior: 6 pétalos más pequeños, rotados 30° */}
-                    {Array.from({ length: 6 }, (_, k) => {
-                      const angle = k * 60 + 30;
-                      const rad = ((angle - 90) * Math.PI) / 180;
-                      const cx = +(Math.cos(rad) * 8).toFixed(2);
-                      const cy = +(Math.sin(rad) * 8).toFixed(2);
-                      return (
-                        <ellipse
-                          key={`i${k}`}
-                          className={`fa-petal-shape-inner${
-                            f.alt ? " alt" : ""
-                          }`}
-                          cx={cx}
-                          cy={cy}
-                          rx="7"
-                          ry="13"
-                          transform={`rotate(${angle} ${cx} ${cy})`}
-                        />
-                      );
-                    })}
-                    <circle
-                      className={`fa-flower-center${f.alt ? " alt" : ""}`}
-                      r="5"
-                    />
+                    <circle className="fa-flower-center" r="13" />
                   </g>
                 </g>
               </g>

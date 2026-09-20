@@ -6,7 +6,7 @@ export default function App() {
       titulo="Hoy es tu día"
       mensaje="Feliz 21 de marzo 🧡"
       firma="@Ameri50"
-      flowerCount={22}
+      flowerCount={42}
       duracion={23}
     />
   );
