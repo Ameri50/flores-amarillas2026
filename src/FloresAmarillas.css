@@ -9,6 +9,10 @@
   --leaf: #2f6b3a;
   --leaf-dark: #1f4d28;
   --card-bg: rgba(10, 13, 43, 0.55);
+  --rose-red: #d81f35;
+  --rose-red-deep: #8c101f;
+  --rose-yellow: #f6c445;
+  --rose-yellow-deep: #d99a12;
 
   min-height: 100dvh;
   width: 100%;
@@ -220,13 +224,22 @@
   animation-delay: var(--delay, 0s);
 }
 .fa-petal-shape {
-  fill: var(--gold);
+  fill: var(--rose-red);
 }
 .fa-petal-shape.alt {
-  fill: var(--gold-deep);
+  fill: var(--rose-yellow);
+}
+.fa-petal-shape-inner {
+  fill: var(--rose-red-deep);
+}
+.fa-petal-shape-inner.alt {
+  fill: var(--rose-yellow-deep);
 }
 .fa-flower-center {
-  fill: #5a3a1a;
+  fill: var(--rose-red-deep);
+}
+.fa-flower-center.alt {
+  fill: var(--rose-yellow-deep);
 }
 
 @keyframes fa-grow {

@@ -19,7 +19,7 @@ export default function FloresAmarillas({
   titulo = "Hoy es tu día",
   mensaje = "Feliz 21 de marzo 🧡",
   firma = "@Ameri50",
-  flowerCount = 22,
+  flowerCount = 26,
   duracion = 23,
 }) {
   const [stars, setStars] = useState([]);
@@ -57,22 +57,23 @@ export default function FloresAmarillas({
     );
   }, [glyphs]);
 
-  // --- Generar jardín de girasoles ---
+  // --- Generar ramo de rosas (rojas y amarillas), denso y sin recortes ---
   useEffect(() => {
     const W = 400;
-    const BASE = 296;
+    const BASE = 300;
+    const MARGIN = 34; // deja espacio de sobra para que ninguna rosa se corte
     const list = Array.from({ length: flowerCount }, (_, i) => {
       const x =
-        12 +
-        (W - 24) * (i / Math.max(flowerCount - 1, 1)) +
-        (Math.random() * 14 - 7);
-      const peakY = 70 + Math.random() * 95;
+        MARGIN +
+        (W - MARGIN * 2) * (i / Math.max(flowerCount - 1, 1)) +
+        (Math.random() * 10 - 5);
+      const peakY = 60 + Math.random() * 90;
       const ctrl1Y = BASE - (BASE - peakY) * 0.45;
-      const drift = Math.random() * 26 - 13;
-      const scale = 0.45 + Math.random() * 0.65;
-      const alt = i % 2 !== 0;
-      const stemDelay = +(Math.random() * 1.4).toFixed(2);
-      const flowerDelay = +(stemDelay + 0.55).toFixed(2);
+      const drift = Math.random() * 16 - 8; // menos deriva = ramo más compacto
+      const scale = 0.8 + Math.random() * 0.4; // rosas grandes y completas
+      const alt = Math.random() < 0.35; // ~65% rojas, ~35% amarillas, como el ramo
+      const stemDelay = +(Math.random() * 1.2).toFixed(2);
+      const flowerDelay = +(stemDelay + 0.5).toFixed(2);
       const leafDelay = +(stemDelay + 0.3).toFixed(2);
       const swayDelay = +(Math.random() * 4).toFixed(2);
       const tipX = x + drift;
@@ -86,7 +87,7 @@ export default function FloresAmarillas({
         flowerDelay,
         leafDelay,
         swayDelay,
-        hasLeaf: scale > 0.65,
+        hasLeaf: i % 3 === 0,
         stemPath: `M${x.toFixed(1)},${BASE} C${(x + drift * 0.3).toFixed(
           1
         )},${ctrl1Y.toFixed(1)} ${(x + drift * 0.7).toFixed(1)},${(
@@ -109,6 +110,9 @@ export default function FloresAmarillas({
         tipY,
       };
     });
+    // Ordena por peakY para que las rosas "de atrás" (más arriba) se dibujen
+    // primero y las de adelante queden completas por encima, como un ramo real.
+    list.sort((a, b) => a.tipY - b.tipY);
     setFlowers(list);
   }, [flowerCount]);
 
@@ -230,24 +234,48 @@ export default function FloresAmarillas({
                   }}
                 >
                   <g>
-                    {Array.from({ length: 8 }, (_, k) => {
-                      const angle = k * 45;
+                    {/* capa exterior: 6 pétalos grandes */}
+                    {Array.from({ length: 6 }, (_, k) => {
+                      const angle = k * 60;
                       const rad = ((angle - 90) * Math.PI) / 180;
-                      const cx = +(Math.cos(rad) * 17).toFixed(2);
-                      const cy = +(Math.sin(rad) * 17).toFixed(2);
+                      const cx = +(Math.cos(rad) * 15).toFixed(2);
+                      const cy = +(Math.sin(rad) * 15).toFixed(2);
                       return (
                         <ellipse
-                          key={k}
+                          key={`o${k}`}
                           className={`fa-petal-shape${f.alt ? " alt" : ""}`}
                           cx={cx}
                           cy={cy}
-                          rx="9"
-                          ry="18"
+                          rx="11"
+                          ry="19"
                           transform={`rotate(${angle} ${cx} ${cy})`}
                         />
                       );
                     })}
-                    <circle className="fa-flower-center" r="14" />
+                    {/* capa interior: 6 pétalos más pequeños, rotados 30° */}
+                    {Array.from({ length: 6 }, (_, k) => {
+                      const angle = k * 60 + 30;
+                      const rad = ((angle - 90) * Math.PI) / 180;
+                      const cx = +(Math.cos(rad) * 8).toFixed(2);
+                      const cy = +(Math.sin(rad) * 8).toFixed(2);
+                      return (
+                        <ellipse
+                          key={`i${k}`}
+                          className={`fa-petal-shape-inner${
+                            f.alt ? " alt" : ""
+                          }`}
+                          cx={cx}
+                          cy={cy}
+                          rx="7"
+                          ry="13"
+                          transform={`rotate(${angle} ${cx} ${cy})`}
+                        />
+                      );
+                    })}
+                    <circle
+                      className={`fa-flower-center${f.alt ? " alt" : ""}`}
+                      r="5"
+                    />
                   </g>
                 </g>
               </g>
